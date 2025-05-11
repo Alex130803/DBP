@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FRD</title>
     <link rel="stylesheet" href="../assets/style.css">
+    <script src="../assets/scripts.js"></script>
+
 </head>
 <body>
     <div class="mainContainer">
@@ -15,6 +17,14 @@
                     <input type="submit" name="searchSubmit" id="searchSubmit">
                 </form>
             </div>
+            <div class="LogInButton" onclick="togleLL()">
+                <img src="../assets/images/user.png" alt="UserIcon">
+            </div>
+        </div>
+        <div class="LLcontainer" style="display: none;" id="LLcontainer">
+            <!-- If the user is loged in (Professor/Student) only Log out option is displayes otherwise only Log in -->
+            <button id="LogIn" onclick="">Log In</button>
+            <button id="LogOut" onclick="">Log Out</button>
         </div>
         <div class="bodyContainer">
             <div class="bodyTitleContainer">
