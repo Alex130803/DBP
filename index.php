@@ -1,72 +1,69 @@
 <?php
 session_start();
-require 'config.php';
+require 'pages/config.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+// Handle login
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
-    $password = $_POST['password'];
+    $password = $_POST['password']; // plain text za sada
 
-    $passwordHash = hash('sha256', $password);
-
-    $stmt = $conn->prepare("SELECT id, password, role FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
+    $sql = "SELECT * FROM users WHERE FName = ? AND Pswd = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $username, $password); 
     $stmt->execute();
-    $stmt->bind_result($id, $hashed_password, $role);
-    if ($stmt->fetch() && $hashed_password === $passwordHash) {
-        $_SESSION['user_id'] = $id;
-        $_SESSION['role'] = $role;
-        header("Location: dashboard.php");
+    $result = $stmt->get_result();
+
+    if ($result->num_rows == 1) {
+        $_SESSION['admin'] = true;
+        unset($_SESSION['visitor']); // očisti ako je ranije bio guest
+        header("Location: pages/mainScreen.php");
         exit();
     } else {
-        echo "Invalid username or password.";
+        $error = "Invalid login.";
     }
+}
 
-    $stmt->close();
-    $conn->close();
+// Handle guest access
+if (isset($_GET['guest']) && $_GET['guest'] === 'true') {
+    $_SESSION['visitor'] = true;
+    unset($_SESSION['admin']); // sigurnosti radi
+    header("Location: pages/mainScreen.php");
+    exit();
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log In</title>
-
-    <link rel="stylesheet" href="assets\style.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-    <div class="mainContainer">
-        <div class="loginContainer">
-            <form name="loginForm">
-                <div class="loginHadder">
-                    Welcome to FRD
+    <div class="loginContainer">
+        <div class="loginHadder">Login</div>
+
+        <?php if (isset($error)) echo "<p class='error-msg' style='color:red; text-align:center;'>$error</p>"; ?>
+
+        <form method="POST">
+            <div class="loginBlock">
+                <div class="loginBlockText">Username:</div>
+                <div class="loginBlockInput">
+                    <input type="text" class="loginInput" name="username" placeholder="Enter username" required>
                 </div>
-                <div class="loginBlock">
-                    <div class="loginBlockText">
-                        Please enter your email:
-                    </div>
-                    <div class="loginBlockInput">
-                        <input class="loginInput" type="email" placeholder="example@gmail.com" required>
-                    </div>
+            </div>
+
+            <div class="loginBlock">
+                <div class="loginBlockText">Password:</div>
+                <div class="loginBlockInput">
+                    <input type="password" class="loginInput" name="password" placeholder="Enter password" required>
                 </div>
-                <div class="loginBlock">
-                    <div class="loginBlockText">
-                        Please enter your password:
-                    </div>
-                    <div class="loginBlockInput">
-                        <input class="loginInput" type="password" placeholder="******************" required>
-                    </div>
-                </div>
-                <input type="submit" value="Submit" id="loginSubmit">
-                
-            </form>
-            <button id="guestButton">Continue as a guest</button>
-        </div>
+            </div>
+
+            <input type="submit" id="loginSubmit" value="Login">
+        </form>
+
+        <button id="guestButton" onclick="location.href='index.php?guest=true'">Continue as Guest</button>
     </div>
 </body>
 </html>

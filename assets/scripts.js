@@ -27,7 +27,7 @@ function createBookElement(bookId, title, tags, abstractText) {
     subContainer.className = "ResultsSubContainer";
 
     const tagsContainer = document.createElement("div");
-    tagsContainer.className = "resultTagsConatiner";
+    tagsContainer.className = "resultTagsContainer";
 
     tags.forEach(tag => {
         const tagDiv = document.createElement("div");
@@ -47,8 +47,7 @@ function createBookElement(bookId, title, tags, abstractText) {
 
     return container;
 }
-
-
+ 
 function openPopUp(){
     document.getElementById("popUpBack").style.display = "block";
 }

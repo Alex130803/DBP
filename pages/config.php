@@ -1,16 +1,11 @@
 <?php
-$servername = "localhost";  
-$username = "ib8671";
-$password = "Theurgy7+alleviate";
-$dbname = "ib8671";
+$host = 'localhost';
+$user = 'root'; 
+$password = ''; 
+$dbname = 'ib8671';
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
+$conn = new mysqli($host, $user, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 ?>
-
-
