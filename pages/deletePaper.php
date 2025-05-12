@@ -1,21 +1,32 @@
 <?php
 require_once "config.php";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
-    $id = intval($_POST['id']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['paperId'])) {
+    $paperId = intval($_POST['paperId']);
 
-    // Delete keywords
-    $conn->prepare("DELETE FROM paper_keywords WHERE id = ?")->execute([$id]);
+    $conn->begin_transaction(); 
 
-    // Delete authorship
-    $conn->prepare("DELETE FROM authorship WHERE paperId = ?")->execute([$id]);
+    try {
+        $stmt = $conn->prepare("DELETE FROM paper_keywords WHERE id = ?");
+        $stmt->bind_param("i", $paperId);
+        $stmt->execute();
 
-    // Delete paper
-    $stmt = $conn->prepare("DELETE FROM papers WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
+        $stmt = $conn->prepare("DELETE FROM authorship WHERE paperId = ?");
+        $stmt->bind_param("i", $paperId);
+        $stmt->execute();
 
-    header("Location: mainScreen.php");
-    exit();
+        $stmt = $conn->prepare("DELETE FROM papers WHERE id = ?");
+        $stmt->bind_param("i", $paperId);
+        $stmt->execute();
+
+        $conn->commit();
+        header("Location: mainScreen.php");
+        exit();
+    } catch (Exception $e) {
+        $conn->rollback();
+        echo "Error deleting paper: " . $e->getMessage();
+    }
+} else {
+    echo "Invalid request.";
 }
 ?>

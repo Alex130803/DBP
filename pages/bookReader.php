@@ -56,6 +56,11 @@ while ($row = $keyRes->fetch_assoc()) {
             max-width: 800px;
             margin: 50px auto;
             font-family: sans-serif;
+            background-color: #D9D9D9;
+            padding: 30px;
+            border-radius: 20px;
+            border-left: 4px black solid;
+            overflow: hidden;
         }
 
         h1 {
@@ -78,6 +83,22 @@ while ($row = $keyRes->fetch_assoc()) {
 
         .back-link:hover {
             text-decoration: underline;
+        }
+
+        button{
+            color: black;
+            background-color: white;
+            padding: 14px;
+            border-radius: 14px;
+            border-left: 4px solid black;
+        }
+
+        a{
+            color: black;
+            background-color: white;
+            padding: 14px;
+            border-radius: 14px;
+            border-left: 4px solid black;
         }
     </style>
 </head>
